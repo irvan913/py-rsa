@@ -1,22 +1,19 @@
-import math
+import math, pdb
 import sys
 
 def eea(a,b):
-	an = a
-	bn = b
+	an = max(a,b)
+	bn = min(a,b)
 	xn = y = 1
-	x = yn = 0
-	r = a%b
+	x = 0
 	while (an%bn) != 0:
-		r = gcd = an%bn
+		c = -(an/bn)
+		r = an%bn
 		an = bn
 		bn = r
-		c = -(a/b)
 		temp = x
-		x = (x*a)+xn	
+		x = (x*c)+xn
 		xn = temp
-		y = (math.ceil(abs(float(a*x)/float(b))))*(x/abs(x))
-	print gcd
-	return gcd
-
-eea(7049, 1802)
+		y = (round(abs(float(max(a,b)*x)/float(min(a,b)))))*(x/abs(x))*(-1)
+	result = (r, x, y)
+	return result
