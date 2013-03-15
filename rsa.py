@@ -1,5 +1,4 @@
 import math, random, sys
-import pdb
 
 
 def eea(a,b):
@@ -7,6 +6,7 @@ def eea(a,b):
 	bn = min(a,b)
 	xn = y = 1
 	x = 0
+	r = 0
 	while (an%bn) != 0:
 		c = -(an/bn)
 		r = an%bn
@@ -15,7 +15,10 @@ def eea(a,b):
 		temp = x
 		x = (x*c)+xn
 		xn = temp
-		y = (round(abs(float(max(a,b)*x)/float(min(a,b)))))*(x/abs(x))*(-1)
+		try:
+			y = (round(abs(float(max(a,b)*x)/float(min(a,b)))))*(x/abs(x))*(-1)
+		except BaseException:
+			y = 0
 	result = (r, x, y)
 	return result
 
@@ -28,23 +31,6 @@ def gcd(a,b):
 		an = bn
 		bn = r
 	return r
-
-
-def congruence_check(a,b,m,t):
-	if t == 'check':
-		if (a-b)%m == 0:
-			return True
-		else:
-			return False
-	elif t == 'eq':
-		return eea(a,b)[0]
-	else:
-		x = a+m
-		i = 1
-		while x < 0:
-			i += 1
-			x = a+(i*m)
-		return x
 
 
 def miller_rabin_check(a,s,d,n):
@@ -81,7 +67,7 @@ def gen_prime(bits):
 			break
 
 
-def rsa():
+def rsa_keygen():
 	p = gen_prime(256)
 	q = gen_prime(256)
 	n = p*q
@@ -90,8 +76,21 @@ def rsa():
 		e = random.randrange(1, phi_n)
 		if gcd(phi_n, e) == 1:
 			break
-	print e
+	d = eea(e,phi_n)[1]
+	public = (e,n)
+	private = (d,n)
+	return (public, private)
 
-rsa()
+
+def rsa_encrypt(M,e,n):
+	M = ''.join(str(ord(i)) for i in M)
+	if M < n:
+		return pow(M,e,n)
+	else:
+		return 'message is too long'
+
+
+def rsa_decrypt(C,d,n):
+	return pow(C,d,n)
 
 
