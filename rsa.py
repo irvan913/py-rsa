@@ -16,16 +16,19 @@ def eea(a,b):
 		x = (x*c)+xn
 		xn = temp
 		try:
-			y = (round(abs(float(max(a,b)*x)/float(min(a,b)))))*(x/abs(x))*(-1)
+			y = int((round(abs(float(max(a,b)*x)/float(min(a,b)))))*(x/abs(x))*(-1))
 		except BaseException:
 			y = 0
 	result = (r, x, y)
+	print result
 	return result
 
+# eea(17,2668)
 
 def gcd(a,b):
 	an = max(a,b)
 	bn = min(a,b)
+	r = 0
 	while (an%bn) != 0:
 		r = an%bn
 		an = bn
@@ -68,29 +71,42 @@ def gen_prime(bits):
 
 
 def rsa_keygen():
-	p = gen_prime(256)
-	q = gen_prime(256)
+	p = gen_prime(16)
+	q = gen_prime(16)
 	n = p*q
 	phi_n = (p-1)*(q-1)
 	while True:
 		e = random.randrange(1, phi_n)
 		if gcd(phi_n, e) == 1:
 			break
-	d = eea(e,phi_n)[1]
+	result = eea(e,phi_n)
+	d = result[2]
+	while d < 0:
+		d += phi_n
 	public = (e,n)
 	private = (d,n)
 	return (public, private)
 
 
 def rsa_encrypt(M,e,n):
-	M = ''.join(str(ord(i)) for i in M)
-	if M < n:
-		return pow(M,e,n)
-	else:
-		return 'message is too long'
+	# M = ''.join(str(ord(i)) for i in M)
+	return pow(int(M),e,n)
 
 
 def rsa_decrypt(C,d,n):
-	return pow(C,d,n)
+	c = pow(C,d,n)
+	# M = ''.join(str(chr(i)) for i in int(c))
+	return C
 
 
+def encrypt(M):
+	key = rsa_keygen()
+	e = key[0][0]
+	n = key[0][1]
+	d = key[1][0]
+	C = rsa_encrypt(M,d,n)
+	result = rsa_decrypt(C,e,n)
+	print "this is the cypertext:"
+	print C
+	print "and this is the plaintext:"
+	print result
